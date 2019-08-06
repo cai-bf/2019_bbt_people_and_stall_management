@@ -22,14 +22,14 @@ $api->version('v1', [
     $api->post('authorizations', 'AuthorizationsController@login')->name('authorizations.login');
 
     $api->group([
-        'middleware' => ['api.auth', 'api.throttle', 'refresh'],
+        'middleware' => ['jwt.auth', 'api.throttle'],
         'limit' => 60,
         'expires' => 1
     ], function($api) {
         // token
         $api->put('authorizations', 'AuthorizationsController@refresh')->name('authorizations.refresh');
         $api->delete('authorizations', 'AuthorizationsController@logout')->name('authorizations.logout');
-
-        
+        // user
+        $api->get('user', 'UsersController@get_user')->name('users.get_user');
     });
 });

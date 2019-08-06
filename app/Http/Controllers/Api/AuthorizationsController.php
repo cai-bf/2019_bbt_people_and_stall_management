@@ -10,7 +10,7 @@ class AuthorizationsController extends Controller
     public function login(Request $request) {
         $credentials = $request->only('sno', 'password');
 
-        if ($token = auth()->attempt($credentials)) {
+        if ($token = auth()->setTTL(120)->attempt($credentials)) {
             return $this->responseToken($token);
         }
 

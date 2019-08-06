@@ -29,7 +29,8 @@ class RefreshToken extends BaseMiddleware
         } catch (TokenExpiredException $exception) {
             try {
                 $token = $this->auth->refresh();
-                auth()->onceUsingId(auth()->payload()->get('sub'));
+                auth()->onceUsingId($this->auth->manager()->getPayloadFactory()
+                        ->buildClaimsCollection()->toPlainArray()['sub']);
             } catch (JWTException $exception) {
                 throw new UnauthorizedHttpException('jwt-auth', $exception->getMessage());
             }
