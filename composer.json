@@ -7,10 +7,12 @@
     "require": {
         "php": ">=7.0.0",
         "dingo/api": "^2",
-        "fideloper/proxy": "~3.3",
-        "laravel/framework": "5.5.*",
+        "fideloper/proxy": "^4.0",
+        "laravel/framework": "5.7.*",
         "laravel/tinker": "~1.0",
         "liyu/dingo-serializer-switch": "^0.3.1",
+        "orangehill/iseed": "^2.6",
+        "spatie/laravel-permission": "^2.37",
         "tymon/jwt-auth": "1.0.0-rc.3"
     },
     "require-dev": {
@@ -26,7 +28,10 @@
         ],
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/constants.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

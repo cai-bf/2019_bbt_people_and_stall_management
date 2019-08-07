@@ -18,8 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('sno', 12);
             $table->string('email')->unique()->nullable();
             $table->string('password');
-            $table->tinyInteger('group_id')->default(0);
-            $table->tinyInteger('department_id')->default(0);
+            $table->tinyInteger('group_id');
+            $table->tinyInteger('department_id');
             $table->softDeletes();
             $table->timestamps();
         });

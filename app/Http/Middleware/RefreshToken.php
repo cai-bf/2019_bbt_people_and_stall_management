@@ -36,7 +36,7 @@ class RefreshToken extends BaseMiddleware
             }
         }
 
-        return next($request)->withHeaders([
+        return $next($request)->withHeaders([
             'Authorization' => 'Bearer ' . $token
         ]);
     }

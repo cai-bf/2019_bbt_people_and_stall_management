@@ -16,7 +16,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api',
-    'middleware' => ['serializer:array', 'bindings']
+    'middleware' => ['serializer:array', 'bindings', 'permission']
 ], function($api) {
     // login
     $api->post('authorizations', 'AuthorizationsController@login')->name('authorizations.login');
@@ -31,5 +31,7 @@ $api->version('v1', [
         $api->delete('authorizations', 'AuthorizationsController@logout')->name('authorizations.logout');
         // user
         $api->get('user', 'UsersController@get_user')->name('users.get_user');
+        $api->post('users', 'UsersController@store')->name('users.store');
+        $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
     });
 });
