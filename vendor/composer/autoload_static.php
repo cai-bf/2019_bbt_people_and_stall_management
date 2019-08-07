@@ -402,6 +402,7 @@ class ComposerStaticInit607557b25f3fd7f6dcda34428d7c679b
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\GenerateToken' => __DIR__ . '/../..' . '/app/Console/Commands/GenerateToken.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Api\\AuthorizationsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/AuthorizationsController.php',
