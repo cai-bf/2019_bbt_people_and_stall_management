@@ -20,6 +20,8 @@ $api->version('v1', [
 ], function($api) {
     // login
     $api->post('authorizations', 'AuthorizationsController@login')->name('authorizations.login');
+    // send psd reset captcha
+    $api->post('psd_reset/captcha', 'UsersController@sendPsdResetCaptcha')->name('users.psd_captcha');
 
     $api->group([
         'middleware' => ['jwt.auth', 'api.throttle'],

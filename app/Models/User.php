@@ -53,7 +53,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsTo(Department::class);
     }
 
-    static public function checkPassword($password, $hashpsd) {
+    static public function checkPsd($password, $hashpsd) {
         return Hash::check($password, $hashpsd);
     }
 

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Department;
+use App\Models\Captcha;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordReset;
 
 class UsersController extends Controller
 {
@@ -55,10 +58,34 @@ class UsersController extends Controller
         ]);
         
         $user = auth()->user();
-        if (!User::checkPassword($request->old_password, $user->password))
+        if (!User::checkPsd($request->old_password, $user->password))
             return $this->response->errorBadRequest('密码错误');
         $user->password = \bcrypt($request->password);
         $user->save();
+
+        return $this->response->noContent();
+    }
+
+    public function sendPsdResetCaptcha(Request $request) {
+        $request->validate([
+            'sno' => 'required|string|size:12',
+            'email' => 'required|email'
+        ]);
+
+        $user = User::where('sno', $request->sno)->with('detail')->first();
+        if (!$user or $user->email !== $request->email)
+            return $this->response->errorBadRequest('学号或对应邮箱错误');
+        
+        $random = strval(random_int(10000000, 99999999));
+        
+        Captcha::create([
+            'type' => PSDRESET,
+            'user_id' => $user->id,
+            'captcha' => bcrypt($random),
+            'expires_on' => date('Y-m-d H:i:s', strtotime('+10 minutes'))
+        ]);
+
+        Mail::to($user->email, $user->detail->name)->send(new PasswordReset($random));
 
         return $this->response->noContent();
     }

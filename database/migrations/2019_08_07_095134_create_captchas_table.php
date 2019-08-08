@@ -15,9 +15,10 @@ class CreateCaptchasTable extends Migration
     {
         Schema::create('captchas', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('type')->comment('验证码类型(eg:忘记密码,修改邮箱)');
+            $table->tinyInteger('type')->comment('验证码类型(1.忘记密码,2.修改邮箱)');
             $table->integer('user_id');
             $table->string('captcha');
+            $table->timestamp('expires_on');
             $table->timestamps();
         });
     }
