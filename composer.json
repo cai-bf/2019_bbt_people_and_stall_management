@@ -30,7 +30,8 @@
             "App\\": "app/"
         },
         "files": [
-            "app/constants.php"
+            "app/constants.php",
+            "app/helpers.php"
         ]
     },
     "autoload-dev": {

@@ -22,6 +22,8 @@ $api->version('v1', [
     $api->post('authorizations', 'AuthorizationsController@login')->name('authorizations.login');
     // send psd reset captcha
     $api->post('psd_reset/captcha', 'UsersController@sendPsdResetCaptcha')->name('users.psd_captcha');
+    // reset password
+    $api->post('reset_password', 'UsersController@resetPsd')->name('users.reset_psd');
 
     $api->group([
         'middleware' => ['jwt.auth', 'api.throttle'],
@@ -35,5 +37,8 @@ $api->version('v1', [
         $api->get('user', 'UsersController@get_user')->name('users.get_user');
         $api->post('users', 'UsersController@store')->name('users.store');
         $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
+        $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
+            ->name('users.email_captcha');
+        $api->post('user/email', 'UsersController@resetEmail')->name('users.reset_email');
     });
 });

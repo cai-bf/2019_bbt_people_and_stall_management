@@ -10,4 +10,4 @@ const OFFICER = 6;
 
 // 验证码类型
 const PSDRESET = 1;
-const EMAILCHANGE = 2;
+const EMAILRESET = 2;

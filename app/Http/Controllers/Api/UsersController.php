@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Captcha;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordReset;
+use App\Mail\EmailReset;
 
 class UsersController extends Controller
 {
@@ -72,20 +73,84 @@ class UsersController extends Controller
             'email' => 'required|email'
         ]);
 
-        $user = User::where('sno', $request->sno)->with('detail')->first();
-        if (!$user or $user->email !== $request->email)
+        $user = User::where('sno', $request->sno)->first();
+        if (!$user || $user->email !== $request->email)
             return $this->response->errorBadRequest('学号或对应邮箱错误');
         
-        $random = strval(random_int(10000000, 99999999));
+        $captcha = getCaptcha();
         
         Captcha::create([
             'type' => PSDRESET,
             'user_id' => $user->id,
-            'captcha' => bcrypt($random),
+            'captcha' => bcrypt($captcha),
             'expires_on' => date('Y-m-d H:i:s', strtotime('+10 minutes'))
         ]);
 
-        Mail::to($user->email, $user->detail->name)->send(new PasswordReset($random));
+        Mail::to($user->email)->send(new PasswordReset($captcha));
+
+        return $this->response->noContent();
+    }
+
+    public function resetPsd(Request $request) {
+        $request->validate([
+            'sno' => 'required|string|size:12',
+            'captcha' => 'required',
+            'password' => 'required'
+        ]);
+
+        $user = User::where('sno', $request->sno)->first();
+        $captcha = $user->captcha()->where('type', PSDRESET)
+                    ->where('expires_on', '>', date('Y-m-d H:i:s'))
+                    ->orderByDesc('expires_on')
+                    ->first();
+        
+        if (!$user)
+            return $this->response->errorBadRequest('学号错误');
+        if (!$captcha || !Captcha::checkCaptcha($request->captcha, $captcha->captcha))
+            return $this->response->errorBadRequest('验证码错误或已过期');
+        
+        $captcha->update(['used' => 1]);
+        $user->update(['password' => bcrypt($request->password)]);
+
+        return $this->response->noContent();
+    }
+
+    public function sendChangeEmailCaptcha(Request $request) {
+        $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        $user = auth()->user();
+        $captcha = getCaptcha();
+
+        Captcha::create([
+            'type' => \EMAILRESET,
+            'user_id' => $user->id,
+            'captcha' => \bcrypt($captcha),
+            'expires_on' => date('Y-m-d H:i:s', strtotime('+10 minutes')),
+            'remark' => $request->email
+        ]);
+
+        Mail::to($request->email)->send(new EmailReset($captcha));
+
+        return $this->response->noContent();
+    }
+
+    public function resetEmail(Request $request) {
+        $request->validate([
+            'captcha' => 'required|string'
+        ]);
+
+        $captcha = auth()->user()->captcha()->where('type', \EMAILRESET)
+                    ->where('expires_on', '>', date('Y-m-d H:i:s'))
+                    ->orderByDesc('expires_on')
+                    ->first();
+        
+        if (!$captcha || !Captcha::checkCaptcha($request->captcha, $captcha->captcha))
+            return $this->response->errorBadRequest('验证码错误或已过期');
+        
+        $captcha->update(['used' => 1]);
+        auth()->user()->update(['email' => $captcha->remark]);
 
         return $this->response->noContent();
     }
