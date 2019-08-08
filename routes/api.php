@@ -34,7 +34,10 @@ $api->version('v1', [
         $api->put('authorizations', 'AuthorizationsController@refresh')->name('authorizations.refresh');
         $api->delete('authorizations', 'AuthorizationsController@logout')->name('authorizations.logout');
         // user
-        $api->get('user', 'UsersController@get_user')->name('users.get_user');
+        $api->get('users', 'UsersController@index')->name('users.index');
+        $api->get('users/myDepartment', 'UsersController@getDepartment')->name('users.department');
+        $api->get('users/myGroup', 'UsersController@getGroup')->name('users.group');
+        $api->get('user/{id?}', 'UsersController@get_user')->name('users.get_user');
         $api->post('users', 'UsersController@store')->name('users.store');
         $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')

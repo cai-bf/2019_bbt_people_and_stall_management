@@ -13,11 +13,34 @@ use App\Mail\EmailReset;
 
 class UsersController extends Controller
 {
-    public function get_user() {
+    public function index() {
+        $users = User::with(['department', 'group', 'detail' => function($query) {
+            $query->select(['user_id', 'name', 'sex']);
+        }])->orderBy('group_id')->orderBy('department_id')->paginate(PER_PAGE);
+        return $this->response->array($users);
+    }
+
+    public function getDepartment() {
+        $users = User::where('department_id', auth()->user()->department_id)
+                    ->with(['department', 'group', 'detail' => function($query) {
+                        $query->select(['user_id', 'name', 'sex']);
+                    }])->orderBy('group_id')->paginate(PER_PAGE);
+        return $this->response->array($users);
+    }
+
+    public function getGroup() {
+        $users = User::where('group_id', auth()->user()->group_id)
+                    ->with(['department', 'group', 'detail' => function($query) {
+                        $query->select(['user_id', 'name', 'sex']);
+                    }])->orderBy('group_id')->paginate(PER_PAGE);
+        return $this->response->array($users);
+    }
+
+    public function get_user($id = 0) {
         $user = auth()->user();
         $user = User::with(['department', 'group', 'detail' => function($q) {
             $q->with(['college']);
-        }])->find($user->id);
+        }])->find(($id ? $id : $user->id));
         return $this->response->array($user->toArray());
     }
 

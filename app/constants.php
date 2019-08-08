@@ -11,3 +11,5 @@ const OFFICER = 6;
 // 验证码类型
 const PSDRESET = 1;
 const EMAILRESET = 2;
+
+const PER_PAGE = 20;
