@@ -33,6 +33,7 @@ $api->version('v1', [
         // token
         $api->put('authorizations', 'AuthorizationsController@refresh')->name('authorizations.refresh');
         $api->delete('authorizations', 'AuthorizationsController@logout')->name('authorizations.logout');
+        
         // user
         $api->get('users', 'UsersController@index')->name('users.index');
         $api->get('users/myDepartment', 'UsersController@getDepartment')->name('users.department');
@@ -43,5 +44,11 @@ $api->version('v1', [
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
             ->name('users.email_captcha');
         $api->post('user/email', 'UsersController@resetEmail')->name('users.reset_email');
+
+        // department
+        $api->get('departments/index', 'DepartmentsController@index')->name('departments.index');
+        $api->post('departments', 'DepartmentsController@create')->name('departments.create');
+        $api->put('departments/{department}', 'DepartmentsController@update')->name('departments.update');
+        $api->delete('departments/{department}', 'DepartmentsController@delete')->name('departments.delete');
     });
 });
