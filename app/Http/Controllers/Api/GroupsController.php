@@ -16,7 +16,8 @@ class GroupsController extends Controller
         $request->validate([
             'name' => 'required|string',
             'intro' => 'string',
-            'isAdmin' => 'required|between:0,1'
+            'isAdmin' => 'required|between:0,1',
+            'level' => 'required|integer'
         ]);
 
         $group = new Group;
