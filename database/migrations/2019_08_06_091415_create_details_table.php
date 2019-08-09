@@ -21,6 +21,7 @@ class CreateDetailsTable extends Migration
             $table->string('avatar');
             $table->string('dormitory', 5)->nullable()->comment('宿舍楼');
             $table->string('room', 4)->nullable()->comment('宿舍房号');
+            $table->tinyInteger('college_id')->default(0);
             $table->string('major', 30)->nullable()->comment('专业名称');
             $table->string('class', 20)->nullable()->comment('班级');
             $table->date('birth');
@@ -30,7 +31,6 @@ class CreateDetailsTable extends Migration
             $table->string('shortMobile', 6)->nullable();
             $table->string('qq', 13)->nullable();
             $table->string('weibo', 30)->nullable();
-            $table->tinyInteger('college_id')->default(0);
             $table->timestamps();
         });
     }

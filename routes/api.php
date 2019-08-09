@@ -44,6 +44,9 @@ $api->version('v1', [
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
             ->name('users.email_captcha');
         $api->post('user/email', 'UsersController@resetEmail')->name('users.reset_email');
+        // detail
+        $api->post('users/avatar', 'DetailController@uploadAvatar')->name('details.avatar');
+        $api->post('users/detail', 'DetailController@update')->name('details.update');
 
         // department
         $api->get('departments/index', 'DepartmentsController@index')->name('departments.index');
@@ -56,5 +59,8 @@ $api->version('v1', [
         $api->post('groups', 'GroupsController@create')->name('groups.create');
         $api->put('groups/{group}', 'GroupsController@update')->name('groups.update');
         $api->delete('groups/{group}', 'GroupsController@delete')->name('groups.delete');
+
+        // college
+        $api->get('colleges', 'CollegesController@index')->name('colleges.index');
     });
 });

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Group;
 use App\Models\Department;
 use App\Models\Captcha;
+use App\Models\Detail;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordReset;
 use App\Mail\EmailReset;
@@ -60,7 +61,7 @@ class UsersController extends Controller
         \DB::beginTransaction();
         foreach($request->data as $v) {
             if (User::where('sno', $v['sno'])->first())
-                return $this->response->errorBadRequest('已存在学号'.$v['sno']);
+                return $this->response->errorBadRequest('已存在学号'.$v['sno'].',请检查后重新添加');
             $u = User::create([
                 'sno' => $v['sno'],
                 'password' => bcrypt('123456'),
@@ -68,6 +69,15 @@ class UsersController extends Controller
                 'department_id' => $department_pre->id
             ]);
             $u->assignRole($group_pre->name);
+
+            Detail::create([
+                'user_id' => $u->id,
+                'sex' => '不明',
+                'avatar' =>'avatar/default.jpg',
+                'name' => '',
+                'birth' => '2000-01-01',
+                'mobile' => '0'
+            ]);
         }
         \DB::commit();
 
