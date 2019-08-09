@@ -53,6 +53,9 @@ $api->version('v1', [
         $api->post('users/detail', 'DetailController@update')->name('details.update');
         // recycle
         $api->get('users/recycle', 'UsersController@recycleIndex')->name('users.recycleIndex');
+        
+        // BBT library
+        $api->get('bbt/library', 'UsersController@BBTLibrary')->name('bbt.library');
 
         // department
         $api->get('departments/index', 'DepartmentsController@index')->name('departments.index');

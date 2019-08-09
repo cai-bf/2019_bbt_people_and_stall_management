@@ -78,6 +78,23 @@ class UsersController extends Controller
         return $this->response->array($users->toArray());
     }
 
+    public function BBTLibrary(Request $request) {
+        $request->validate([
+            'year' => 'string|size:4',
+            'department_id' => 'integer|between:1,' . Department::count()
+        ]);
+
+        $users = User::withTrashed()->with(['department', 'group', 'detail' => function($query) {
+            $query->select(['user_id', 'name', 'sex']);
+        }])->when($request->year, function($query) use ($request) {
+            $query->where('sno', 'like', $request->year.'%');
+        })->when($request->department_id, function($query) use ($request) {
+            $query->where('department_id', $request->department_id);
+        })->paginate(PER_PAGE);
+
+        return $this->response->array($users->toArray());
+    }
+
     public function store(Request $request) {
         $user = auth()->user();
         $group = $user->group;
@@ -155,7 +172,7 @@ class UsersController extends Controller
         if ($current->group->level <= $user->group->level)
             return $this->response->errorUnauthorized('权限不足');
         
-        $user->update(['deleted_at' => null]);
+        $user->restore();
 
         return $this->response->noContent();
     }
