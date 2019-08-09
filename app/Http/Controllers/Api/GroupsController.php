@@ -33,7 +33,8 @@ class GroupsController extends Controller
     public function update(Group $group, Request $request) {
         $request->validate([
             'name' => 'required|string',
-            'intro' => 'string'
+            'intro' => 'string',
+            'level' => 'required|integer'
         ]);
 
         Role::where('name', $group->name)->update(['name' => $request->name]);
