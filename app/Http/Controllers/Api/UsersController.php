@@ -11,6 +11,7 @@ use App\Models\Detail;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PasswordReset;
 use App\Mail\EmailReset;
+use Illuminate\Database\Eloquent\Builder;
 
 class UsersController extends Controller
 {
@@ -51,6 +52,30 @@ class UsersController extends Controller
         }])->onlyTrashed()->paginate(PER_PAGE);
 
         return $this->response->array($users);
+    }
+
+    public function search(Request $request) {
+        $request->validate([
+            'query' => 'required|string'
+        ]);
+        $q = $request->input('query');
+
+        $users = User::whereHas('detail', function (Builder $query) use ($q) {
+            $query->where('name', 'like', "%$q%")
+                ->orWhere('major', 'like', "%$q%")
+                ->orWhere('mobile', 'like', "%$q%")
+                ->orWhere('shortMobile', 'like', "%$q%")
+                ->orWhere('qq', 'like', "%$q%")
+                ->orWhere('weibo', 'like', "%$q%");
+        })->orWhereHas('group', function (Builder $query) use ($q) {
+            $query->where('name', 'like', "%$q%");
+        })->orWhereHas('department', function(Builder $query) use ($q) {
+            $query->where('name', 'like', "%$q%");
+        })->with(['department', 'group', 'detail' => function($query) {
+            $query->select(['user_id', 'name', 'sex']);
+        }])->orderBy('group_id')->paginate(PER_PAGE);
+
+        return $this->response->array($users->toArray());
     }
 
     public function store(Request $request) {

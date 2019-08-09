@@ -38,15 +38,16 @@ $api->version('v1', [
         $api->get('users', 'UsersController@index')->name('users.index');
         $api->get('users/myDepartment', 'UsersController@getDepartment')->name('users.department');
         $api->get('users/myGroup', 'UsersController@getGroup')->name('users.group');
-        $api->get('users/{id?}', 'UsersController@get_user')->name('users.get_user');
-        $api->put('users/{id}', 'UsersController@update')->name('users.update');
+        $api->get('user/{id?}', 'UsersController@get_user')->name('users.get_user');
+        $api->put('user/{id}', 'UsersController@update')->name('users.update');
         $api->post('users', 'UsersController@store')->name('users.store');
-        $api->delete('users/{user}', 'UsersController@delete')->name('users.delete');
+        $api->delete('user/{user}', 'UsersController@delete')->name('users.delete');
         $api->post('users/recycle/{id}', 'UsersController@recycle')->name('users.recycle');
         $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
             ->name('users.email_captcha');
         $api->post('user/email', 'UsersController@resetEmail')->name('users.reset_email');
+        $api->get('users/search', 'UsersController@search')->name('users.search');
         // detail
         $api->post('users/avatar', 'DetailController@uploadAvatar')->name('details.avatar');
         $api->post('users/detail', 'DetailController@update')->name('details.update');
