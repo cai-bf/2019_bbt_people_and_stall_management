@@ -40,6 +40,8 @@ $api->version('v1', [
         $api->get('users/myGroup', 'UsersController@getGroup')->name('users.group');
         $api->get('user/{id?}', 'UsersController@get_user')->name('users.get_user');
         $api->post('users', 'UsersController@store')->name('users.store');
+        $api->delete('users/{user}', 'UsersController@delete')->name('users.delete');
+        $api->post('users/recycle/{id}', 'UsersController@recycle')->name('users.recycle');
         $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
             ->name('users.email_captcha');
@@ -48,7 +50,7 @@ $api->version('v1', [
         $api->post('users/avatar', 'DetailController@uploadAvatar')->name('details.avatar');
         $api->post('users/detail', 'DetailController@update')->name('details.update');
         // recycle
-        $api->get('users/recycle', 'UsersController@recycleIndex')->name('users.recycle');
+        $api->get('users/recycle', 'UsersController@recycleIndex')->name('users.recycleIndex');
 
         // department
         $api->get('departments/index', 'DepartmentsController@index')->name('departments.index');

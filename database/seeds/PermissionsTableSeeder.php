@@ -66,6 +66,20 @@ class PermissionsTableSeeder extends Seeder
                 'guard_name' => 'api',
                 'route' => 'groups.update',
             ),
+            7 => 
+            array (
+                'id' => 8,
+                'name' => '删除用户',
+                'guard_name' => 'api',
+                'route' => 'users.delete',
+            ),
+            8 => 
+            array (
+                'id' => 9,
+                'name' => '回收用户',
+                'guard_name' => 'api',
+                'route' => 'users.recycle',
+            ),
         ));
         
         

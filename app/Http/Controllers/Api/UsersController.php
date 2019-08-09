@@ -39,7 +39,7 @@ class UsersController extends Controller
 
     public function get_user($id = 0) {
         $user = auth()->user();
-        $user = User::with(['department', 'group', 'detail' => function($q) {
+        $user = User::withTrashed()->with(['department', 'group', 'detail' => function($q) {
             $q->with(['college']);
         }])->find(($id ? $id : $user->id));
         return $this->response->array($user->toArray());
@@ -49,7 +49,7 @@ class UsersController extends Controller
         $users = User::with(['department', 'group', 'detail' => function($query) {
             $query->select(['user_id', 'name', 'sex']);
         }])->onlyTrashed()->paginate(PER_PAGE);
-        
+
         return $this->response->array($users);
     }
 
@@ -61,9 +61,9 @@ class UsersController extends Controller
         $group_pre = Group::where('name', $request->group)->first();
         $department_pre = Department::where('name', $request->department)->first();
 
-        if ($group->id >= $group_pre->id)
+        if ($group->level <= $group_pre->level)
             return $this->response->errorUnauthorized('权限不足');
-        if ($group->id > CHANGWEI && $department->name != $request->department)
+        if ($group->name == '部长' && $department->name != $request->department)
             return $this->response->errorUnauthorized('权限不足');
 
         \DB::beginTransaction();
@@ -104,6 +104,33 @@ class UsersController extends Controller
             return $this->response->errorBadRequest('密码错误');
         $user->password = \bcrypt($request->password);
         $user->save();
+
+        return $this->response->noContent();
+    }
+
+    public function delete(User $user) {
+        $current = auth()->user();
+
+        if ($current->group->name == '部长' && $current->department_id != $user->department_id)
+            return $this->response->errorUnauthorized('权限不足');
+        if ($current->group->level <= $user->group->level)
+            return $this->response->errorUnauthorized('权限不足');
+        
+        $user->delete();
+
+        return $this->response->noContent();
+    }
+
+    public function recycle($id) {
+        $user = User::withTrashed()->find($id);
+        $current = auth()->user();
+        
+        if ($current->group->name == '部长' && $current->department_id != $user->department_id)
+            return $this->response->errorUnauthorized('权限不足');
+        if ($current->group->level <= $user->group->level)
+            return $this->response->errorUnauthorized('权限不足');
+        
+        $user->update(['deleted_at' => null]);
 
         return $this->response->noContent();
     }

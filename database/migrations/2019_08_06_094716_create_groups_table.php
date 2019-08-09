@@ -15,10 +15,10 @@ class CreateGroupsTable extends Migration
     {
         Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name', 5);
             $table->boolean('isAdmin');
             $table->boolean('isManager');
-            // $table->tinyInteger('level');
-            $table->string('name', 5);
+            $table->tinyInteger('level');
             $table->text('intro')->default('');
         });
     }
