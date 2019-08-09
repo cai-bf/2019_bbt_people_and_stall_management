@@ -38,7 +38,8 @@ $api->version('v1', [
         $api->get('users', 'UsersController@index')->name('users.index');
         $api->get('users/myDepartment', 'UsersController@getDepartment')->name('users.department');
         $api->get('users/myGroup', 'UsersController@getGroup')->name('users.group');
-        $api->get('user/{id?}', 'UsersController@get_user')->name('users.get_user');
+        $api->get('users/{id?}', 'UsersController@get_user')->name('users.get_user');
+        $api->put('users/{id}', 'UsersController@update')->name('users.update');
         $api->post('users', 'UsersController@store')->name('users.store');
         $api->delete('users/{user}', 'UsersController@delete')->name('users.delete');
         $api->post('users/recycle/{id}', 'UsersController@recycle')->name('users.recycle');

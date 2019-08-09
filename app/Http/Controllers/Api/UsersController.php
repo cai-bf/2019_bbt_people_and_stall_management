@@ -124,7 +124,7 @@ class UsersController extends Controller
     public function recycle($id) {
         $user = User::withTrashed()->find($id);
         $current = auth()->user();
-        
+
         if ($current->group->name == '部长' && $current->department_id != $user->department_id)
             return $this->response->errorUnauthorized('权限不足');
         if ($current->group->level <= $user->group->level)
@@ -133,6 +133,31 @@ class UsersController extends Controller
         $user->update(['deleted_at' => null]);
 
         return $this->response->noContent();
+    }
+
+    public function update($id, Request $request) {
+        $request->validate([
+            'group_id' => 'required|integer|between:1,' . Group::count(),
+            'department_id' => 'required|integer|between:1,' . Department::count()
+        ]);
+
+        $user = User::withTrashed()->find($id);
+        $current = auth()->user();
+        $group = Group::find($request->group_id);
+
+        if ($current->group->name == '部长' && $user->department_id !== $current->department_id)
+            return $this->response->errorUnauthorized('权限不足');
+        if ($current->group->level < $group->level)
+            return $this->response->errorUnauthorized('权限不足');
+
+        $user->update([
+            'group_id' => $group->id,
+            'department_id' => $request->department_id
+        ]);
+
+        $user->syncRoles([$group->name]);
+        
+        return $this->response->array($user->toArray());
     }
 
     public function sendPsdResetCaptcha(Request $request) {
