@@ -50,5 +50,11 @@ $api->version('v1', [
         $api->post('departments', 'DepartmentsController@create')->name('departments.create');
         $api->put('departments/{department}', 'DepartmentsController@update')->name('departments.update');
         $api->delete('departments/{department}', 'DepartmentsController@delete')->name('departments.delete');
+
+        // group
+        $api->get('groups/index', 'GroupsController@index')->name('groups.index');
+        $api->post('groups', 'GroupsController@create')->name('groups.create');
+        $api->put('groups/{group}', 'GroupsController@update')->name('groups.update');
+        $api->delete('groups/{group}', 'GroupsController@delete')->name('groups.delete');
     });
 });

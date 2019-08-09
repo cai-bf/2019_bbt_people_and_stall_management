@@ -45,6 +45,27 @@ class PermissionsTableSeeder extends Seeder
                 'guard_name' => 'api',
                 'route' => 'departments.delete',
             ),
+            4 => 
+            array (
+                'id' => 5,
+                'name' => '删除管理层',
+                'guard_name' => 'api',
+                'route' => 'groups.delete',
+            ),
+            5 => 
+            array (
+                'id' => 6,
+                'name' => '添加管理层',
+                'guard_name' => 'api',
+                'route' => 'groups.create',
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => '修改管理层',
+                'guard_name' => 'api',
+                'route' => 'groups.update',
+            ),
         ));
         
         
