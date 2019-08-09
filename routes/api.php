@@ -47,6 +47,8 @@ $api->version('v1', [
         // detail
         $api->post('users/avatar', 'DetailController@uploadAvatar')->name('details.avatar');
         $api->post('users/detail', 'DetailController@update')->name('details.update');
+        // recycle
+        $api->get('users/recycle', 'UsersController@recycleIndex')->name('users.recycle');
 
         // department
         $api->get('departments/index', 'DepartmentsController@index')->name('departments.index');

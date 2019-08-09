@@ -45,6 +45,14 @@ class UsersController extends Controller
         return $this->response->array($user->toArray());
     }
 
+    public function recycleIndex() {
+        $users = User::with(['department', 'group', 'detail' => function($query) {
+            $query->select(['user_id', 'name', 'sex']);
+        }])->onlyTrashed()->paginate(PER_PAGE);
+        
+        return $this->response->array($users);
+    }
+
     public function store(Request $request) {
         $user = auth()->user();
         $group = $user->group;
