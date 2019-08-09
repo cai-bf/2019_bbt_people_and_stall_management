@@ -60,7 +60,7 @@ class UsersController extends Controller
         ]);
         $q = $request->input('query');
 
-        $users = User::whereHas('detail', function (Builder $query) use ($q) {
+        $users = User::withTrashed()->whereHas('detail', function (Builder $query) use ($q) {
             $query->where('name', 'like', "%$q%")
                 ->orWhere('major', 'like', "%$q%")
                 ->orWhere('mobile', 'like', "%$q%")
