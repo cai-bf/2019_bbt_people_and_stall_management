@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateStallDetailsTable extends Migration
+class CreateUserStallTaskTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,14 @@ class CreateStallDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('stall_details', function (Blueprint $table) {
+        Schema::create('user_stall_task', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('stall_id');
-            $table->string('location')->default('');
-            $table->dateTime('date');
-            $table->tinyInteger('start');
-            $table->tinyInteger('end');
+            $table->integer('user_id');
+            $table->integer('stall_task_id');
+            $table->tinyInteger('role')->nullable()->default(0);
+            $table->tinyInteger('check')->nullable()->default(0);
             $table->timestamps();
+            $table->unique(['user_id','stall_task_id']);
         });
     }
 
@@ -31,6 +31,6 @@ class CreateStallDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stall_details');
+        Schema::dropIfExists('user_stall_task');
     }
 }
