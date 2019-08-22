@@ -44,6 +44,8 @@ class MigrateData extends Command
                     ->join('mm_details', 'mm_users.id', '=', 'mm_details.user_id')->get();
         DB::connection('mysql_old')->beginTransaction();
         try {
+            DB::table('users')->truncate();
+            DB::table('details')->truncate();
             foreach($old_users as $user) {
                 $u = User::create([
                     'sno' => $user->num,
