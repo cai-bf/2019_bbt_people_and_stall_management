@@ -17,6 +17,7 @@ class CreateUserStallNumbersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unique();
             $table->integer('number')->default(0);
+            $table->tinyInteger('verified')->nullable()->default(0)->comment('课表审查');
             $table->timestamps();
         });
     }

@@ -17,7 +17,8 @@ class CreateCalendarsTable extends Migration
             $table->increments('id');
             $table->integer('year');
             $table->tinyInteger('term');
-            $table->dateTime('date');
+            $table->date('date');
+            $table->unique(['year','term']);
         });
     }
 

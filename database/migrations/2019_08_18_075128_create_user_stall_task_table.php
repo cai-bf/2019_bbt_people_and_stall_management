@@ -18,7 +18,7 @@ class CreateUserStallTaskTable extends Migration
             $table->integer('user_id');
             $table->integer('stall_task_id');
             $table->tinyInteger('role')->nullable()->default(0);
-            $table->tinyInteger('check')->nullable()->default(0);
+            $table->tinyInteger('check_in')->nullable()->default(0);
             $table->timestamps();
             $table->unique(['user_id','stall_task_id']);
         });

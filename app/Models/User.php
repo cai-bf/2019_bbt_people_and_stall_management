@@ -57,6 +57,18 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Captcha::class);
     }
 
+    public function schedules(){
+        return $this->hasMany(Schedule::class);
+    }
+
+    public function stallNumber(){
+        return $this->hasOne(UserStallNumber::class);
+    }
+
+    public function stallTasks(){
+        return $this->belongsToMany(StallTask::class)->using(UserStallTask::class);
+    }
+
     static public function checkPsd($password, $hashpsd) {
         return Hash::check($password, $hashpsd);
     }

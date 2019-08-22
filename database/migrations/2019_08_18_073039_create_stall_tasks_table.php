@@ -18,6 +18,7 @@ class CreateStallTasksTable extends Migration
             $table->integer('stall_id');
             $table->string('location')->default('');
             $table->dateTime('date');
+            $table->integer('number');
             $table->tinyInteger('start');
             $table->tinyInteger('end');
             $table->softDeletes();
