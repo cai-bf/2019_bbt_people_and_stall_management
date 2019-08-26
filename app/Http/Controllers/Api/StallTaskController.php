@@ -19,9 +19,8 @@ class StallTaskController extends Controller
 
     public function newTask(Request $request){
         //验证
-        
         StallTask::create([
-            'stall_id'=>$request->id,
+            'stall_id'=>$request->stall_id,
             'location'=>$request->location,
             'date'=>$request->date,
             'number'=>$request->number,
@@ -33,7 +32,6 @@ class StallTaskController extends Controller
 
     public function deleteTask($id){
         //验证
-        
         StallTask::find($id)->delete();
         return $this->response->noContent();
     }
@@ -65,6 +63,8 @@ class StallTaskController extends Controller
         $task_ids=$tasks->flatMap(function($task){
             return $task->id;
         })->toArray();
+        $already_users_ids=$stall->userStallTask()->pluck('user_id')->toArray();
+        $already_users_str=implode(',',$already_users_ids);
         $users=User::with([
             'stallNumber',
         ])->where('group_id',$group)
@@ -74,11 +74,18 @@ class StallTaskController extends Controller
             $q->where('week',$week)
               ->where('day',$day)
               ->whereBetween('class',[$task->start,$task->end]);
-        })->whereDoesntHave('stallTask',function($q)use($task_ids){
-            $q->whereIn('stall_id',$task_ids);
-        })->get();
-        $sortUsers=$users->shuffle()->sortBy('stallNumber.number')->take($task->number);
-        $sortUsers->each(function($user,$key)use($task){
+        })->get()
+          ->shuffle()
+          ->sortBy(function($user,$key)use($already_users_ids){
+                if (in_array($user->id,$already_users_ids)) return PHP_INT_MAX;
+                else return $user->stallNumber->number;
+          })
+          ->take($task->number);
+        // $users2=User::join('stallNumber','users.id','=','stallNumber')
+
+
+
+        $users->each(function($user,$key)use($task){
             $user->stallTasks()->attach($task->id);
         });
         return $this->response->noContent();
@@ -118,13 +125,13 @@ class StallTaskController extends Controller
     public function showTaskMember($id){
         $users=User::with([
             'details'=>function($q){
-                $q->select(['name', 'sex' ,'mobile']);
+                $q->select(['user_id','name', 'sex' ,'mobile']);
             },
             'department'=>function($q){
-                $q->select('name');
+                $q->select(['user_id','name']);
             },
             'stallNumber'=>function($q){
-                $q->select(['role','check_in']);
+                $q->select(['user_id','role','check_in']);
             },
         ])->whereHas('stallTasks',function($q)use($id){
             $q->where('id',$id);
@@ -132,6 +139,18 @@ class StallTaskController extends Controller
         return $this->response->array($users->toArray());
     }
 
+    public function testCreate($id){
+        $task=StallTask::find($id);
+        $stall=$task->stall;
+        $already_users_ids=$stall->userStallTask()->pluck('user_id')->toArray();
+        $already_users_str=implode(',',$already_users_ids);
+        dd($already_users_str);
 
+
+        // $user_ids=User::join('user_stall_numbers','users.id','=','user_stall_numbers.id')
+        //     ->orderByRaw('rand()')
+        //     ->orderBy('user_stall_numbers.number');
+        
+    }   
 
 }

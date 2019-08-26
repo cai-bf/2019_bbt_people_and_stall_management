@@ -20,4 +20,8 @@ class StallTask extends Model
     public function users(){
         return $this->belongsToMany(User::class)->using(UserStallTask::class);
     }
+
+    public function userStallTasks(){
+        return $this->hasMany(UserStallTask::class);
+    }
 }

@@ -16,4 +16,8 @@ class Stall extends Model
     public function stallTasks(){
         return $this->hasMany(StallTask::class);
     }
+
+    public function userStallTask(){
+        return $this->hasManyThrough(UserStallTask::class,StallTask::class);
+    }
 }

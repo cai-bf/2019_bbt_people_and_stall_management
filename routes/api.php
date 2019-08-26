@@ -12,12 +12,13 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api',
     'middleware' => ['serializer:array', 'bindings', 'permission']
-], function($api) {
+], function ($api) {
     // login
     $api->post('authorizations', 'AuthorizationsController@login')->name('authorizations.login');
     // send psd reset captcha
@@ -29,11 +30,11 @@ $api->version('v1', [
         'middleware' => ['jwt.auth', 'api.throttle'],
         'limit' => 60,
         'expires' => 1
-    ], function($api) {
+    ], function ($api) {
         // token
         $api->put('authorizations', 'AuthorizationsController@refresh')->name('authorizations.refresh');
         $api->delete('authorizations', 'AuthorizationsController@logout')->name('authorizations.logout');
-        
+
         // user
         $api->get('users', 'UsersController@index')->name('users.index');
         $api->get('users/myDepartment', 'UsersController@getDepartment')->name('users.department');
@@ -53,7 +54,7 @@ $api->version('v1', [
         $api->post('users/detail', 'DetailController@update')->name('details.update');
         // recycle
         $api->get('users/recycle', 'UsersController@recycleIndex')->name('users.recycleIndex');
-        
+
         // BBT library
         $api->get('bbt/library', 'UsersController@BBTLibrary')->name('bbt.library');
 
@@ -71,5 +72,38 @@ $api->version('v1', [
 
         // college
         $api->get('colleges', 'CollegesController@index')->name('colleges.index');
+
+
+
+
+        // Stall api
+
+        // Calendar
+        $api->post('stall/calendar/new', 'CalendarController@newCalendar')->name('calendar.new');
+        $api->delete('stall/calendar/delete/{year}/{term}', 'CalendarController@deleteCalendar')->name('calendar.delete');
+        $api->put('stall/calendar/update/{year}/{term}', 'CalendarController@updateCalendar')->name('calendar.update');
+        $api->get('stall/calendar/show/{year?}/{term?}', 'CalendarController@showCalendar')->name('calendar.show');
+
+
+
+        // Schedule
+        $api->post('stall/schedule/store', 'ScheduleController@store')->name('schedule.store');
+        $api->get('stall/schedule/show/{id}', 'ScheduleController@show')->name('schedule.show');
+        $api->put('stall/schedule/check/{id}', 'ScheduleController@check')->name('schedule.check');
+
+        // Stall
+        $api->post('stall/new', 'StallController@newStall')->name('stall.new');
+        $api->delete('stall/delete/{id}', 'StallController@deleteStall')->name('stall.delete');
+        $api->put('stall/update/{id}', 'StallController@updateStall')->name('stall.update');
+        $api->get('stall/show/{id?}', 'StallController@showStall')->name('stall.show');
+
+        // Stall task
+        $api->post('stall/task/new','StallTaskController@newTask')->name('task.new');
+        $api->delete('stall/task/delete/{id}','StallTaskController@deleteTask')->name('task.delete');
+        $api->get('stall/task/show/{id}','StallTaskController@showTask')->name('task.show');
+        $api->get('stall/task/showlist/{id}','StallTaskController@showTaskList')->name('task.showList');
+        
+        $api->get('test/{id}','StallTaskController@testCreate');
+        
     });
 });

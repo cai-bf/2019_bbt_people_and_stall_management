@@ -12,39 +12,44 @@ class ScheduleController extends Controller
     public function store(Request $request) {
         $id=$request->id;
         $user=User::find($id);
-        if ($user->stallNumber()->isEmpty()){
+        if (!$user->stallNumber){
             UserStallNumber::create([
                 'user_id'=>$id,   
             ]);
         }else {
-            $user->number->update(['verified'=>0]);
+            $user->stallNumber->update(['verified'=>0]);
         }
-        Schedule::where('user_id',id)->delete();
+        Schedule::where('user_id',$id)->delete();
         $schedules=$request->schedules;
         foreach($schedules as $s){
             for($i=$s['start'];$i<=$s['end'];$i++){
                 Schedule::create([
                     'user_id'=>$id,
-                    'weak'=>$i,
+                    'week'=>$i,
                     'day'=>$s['day'],
                     'class'=>$s['class']
                 ]);
             }
         }
+        return $this->response->noContent();
     }
 
     public function show($id){
-        $user=User::with(['stallNumber','schedules'=>function($q){
-            $q->select('week','day','class');
-        }])->find($id);
-        return $this->response->array($user->toArray());
+        $schedules=Schedule::where('user_id',$id)
+            ->select(['day','class','week'])
+            ->orderBy('day')
+            ->orderBy('class')
+            ->get()
+            ->groupBy(['day','class']);
+            
+        return $this->response->array($schedules->toArray());
     }
     
-    public function checkSchedule($id){
+    public function check($id){
         //验证
         $user=User::with('stallNumber')->find($id);
         $user->stallNumber->verified=1;
         $user->stallNumber->save();
-
+        return $this->response->noContent();
     }
 }
