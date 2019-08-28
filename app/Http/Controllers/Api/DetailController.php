@@ -28,18 +28,18 @@ class DetailController extends Controller
         $request->validate([
             'name' => 'required|string',
             'sex' => 'required|in:"男","女","不明"',
-            'dormitory' => 'string',
-            'room' => 'string',
-            'major' => 'string',
+            'dormitory' => 'string|nullable',
+            'room' => 'string|nullable',
+            'major' => 'string|nullable',
             'college_id' => 'integer',
-            'class' => 'string',
+            'class' => 'string|nullable',
             'birth' => 'required|date',
-            'origin' => 'string',
-            'politics' => 'string',
+            'origin' => 'string|nullable',
+            'politics' => 'string|nullable',
             'mobile' => 'required|string|size:11',
-            'shortMobile' => 'string',
-            'qq' => 'string',
-            'weibo' => 'string'
+            'shortMobile' => 'string|nullable',
+            'qq' => 'string|nullable',
+            'weibo' => 'string|nullable'
         ]);
 
         $detail = auth()->user()->detail;
