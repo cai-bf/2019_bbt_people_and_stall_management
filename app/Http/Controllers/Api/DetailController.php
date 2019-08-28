@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class DetailController extends Controller
 {
     public function uploadAvatar(Request $request) {
-        if (!in_array($request->file('avatar')->extension(), ['png', 'jpg', 'gif']))
+        if (!in_array($request->file('avatar')->extension(), ['png', 'jpg', 'jpeg', 'gif']))
             return $this->response->errorBadRequest('目前只支持jpg, png, gif格式');
         
         $user = auth()->user();
