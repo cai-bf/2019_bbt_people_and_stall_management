@@ -44,7 +44,7 @@ $api->version('v1', [
         $api->post('users', 'UsersController@store')->name('users.store');
         $api->delete('user/{user}', 'UsersController@delete')->name('users.delete');
         $api->post('users/recycle/{id}', 'UsersController@recycle')->name('users.recycle');
-        $api->put('user/password', 'UsersController@updatePassword')->name('users.updatePassword');
+        $api->put('user/update/password', 'UsersController@updatePassword')->name('users.updatePassword');
         $api->post('user/email/captcha', 'UsersController@sendChangeEmailCaptcha')
             ->name('users.email_captcha');
         $api->post('user/email', 'UsersController@resetEmail')->name('users.reset_email');
