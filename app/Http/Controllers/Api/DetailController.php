@@ -27,7 +27,7 @@ class DetailController extends Controller
     public function update(Request $request) {
         $request->validate([
             'name' => 'required|string',
-            'sex' => 'required|in:"男","女","不明"',
+            'sex' => 'required|string',
             'dormitory' => 'string|nullable',
             'room' => 'string|nullable',
             'major' => 'string|nullable',
