@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Stall;
 use App\Models\Department;
 use App\Models\Group;
@@ -11,13 +12,15 @@ class StallController extends Controller
 {    
     public function newStall(Request $request){
         //验证
-        Stall::create([
+        $stall=Stall::create([
             'name'=>$request->name,
             'description'=>$request->description,
             'department_id'=>$request->department_id,
         ]);
 
-        return $this->response->noContent();
+        return response()->json([
+            "id"=>$stall->id
+        ]);
     }
 
     public function deleteStall($id){
@@ -49,8 +52,12 @@ class StallController extends Controller
     }
     
     public function showStall($id=0) {
-        if ($id) $stalls=Stall::find($id);
-        else $stalls=Stall::all();
+        if ($id) $stalls=Stall::with(['stallTasks'=>function($q){
+            $q->select(['stall_id',DB::raw('count(*) as tasks_number')])->groupBy('stall_id');
+        }])->find($id);
+        else $stalls=Stall::with(['stallTasks'=>function($q){
+            $q->select(['stall_id',DB::raw('count(*) as tasks_number')])->groupBy('stall_id');
+        }])->all();
         return $this->response->array($stalls->toArray());
     }
 

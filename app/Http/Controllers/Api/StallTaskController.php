@@ -146,10 +146,6 @@ class StallTaskController extends Controller
         $already_users_str=implode(',',$already_users_ids);
         dd($already_users_str);
 
-
-        // $user_ids=User::join('user_stall_numbers','users.id','=','user_stall_numbers.id')
-        //     ->orderByRaw('rand()')
-        //     ->orderBy('user_stall_numbers.number');
         
     }   
 
