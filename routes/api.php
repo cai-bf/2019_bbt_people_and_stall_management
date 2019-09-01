@@ -102,6 +102,11 @@ $api->version('v1', [
         $api->delete('stall/task/delete/{id}','StallTaskController@deleteTask')->name('task.delete');
         $api->get('stall/task/show/{id}','StallTaskController@showTask')->name('task.show');
         $api->get('stall/task/showlist/{id}','StallTaskController@showTaskList')->name('task.showList');
+        $api->get('stall/task/member/{id}','StallTaskController@showTaskMember')->name('task.showMember');
+        $api->post('stall/task/check/{id}','StallTaskController@checkIn')->name('task.check');
+        $api->post('stall/task/add/{id}','StallTaskController@addTaskAdmin')->name('task.add');
+        $api->delete('stall/task/deleteadmin/{id}','StallTaskController@addTaskAdmin')->name('task.delete_admin');
+        $api->post('stall/task/create','StallTaskController@createList')->name('task.create');
         
         $api->get('test/{id}','StallTaskController@testCreate');
         

@@ -8,7 +8,8 @@ use App\Models\Schedule;
 use App\Models\StallTask;
 use App\Models\Calendar;
 use App\Models\Stall;
-
+use App\Models\UserStallTask;
+use stdClass;
 
 class StallTaskController extends Controller
 {
@@ -51,10 +52,16 @@ class StallTaskController extends Controller
 
     public function createList(Request $request){
         //验证
-        $id=$request->id;
+        $task_id=$request->id;
         $group=$request->group;
 
-        $task=StallTask::find($id);
+        $task=StallTask::findOrFail($task_id);
+        $admin=UserStallTask::where([
+            'stall_task_id'=>$task_id,
+            'role'=>1
+        ])->get();
+        if ($admin->isEmpty())
+            return $this->response->errorBadRequest('请先添加负责人！');
         $week=$this->dateToWeek($task->date);
         $day=date('w',$task->date);
         if ($day==0)$day=7;
@@ -64,7 +71,7 @@ class StallTaskController extends Controller
             return $task->id;
         })->toArray();
         $already_users_ids=$stall->userStallTask()->pluck('user_id')->toArray();
-        $already_users_str=implode(',',$already_users_ids);
+        // $already_users_str=implode(',',$already_users_ids);
         $users=User::with([
             'stallNumber',
         ])->where('group_id',$group)
@@ -80,7 +87,7 @@ class StallTaskController extends Controller
                 if (in_array($user->id,$already_users_ids)) return PHP_INT_MAX;
                 else return $user->stallNumber->number;
           })
-          ->take($task->number);
+          ->take($task->number-1);
         // $users2=User::join('stallNumber','users.id','=','stallNumber')
 
 
@@ -91,20 +98,33 @@ class StallTaskController extends Controller
         return $this->response->noContent();
     }
 
-    public function addTaskAdmin(Request $request){
+    public function addTaskAdmin($id,Request $request){
         //验证 
-        $user_id=$request->user_id;
-        $task_id=$request->task_id;
-        $user=User::find($user_id);
+        $user_sno=$request->sno;
+        $task_id=$id;
+        $user=User::where('sno',$user_sno)->first();
+        $task=StallTask::findOrFail($task_id);
+        $admin=UserStallTask::where(['stall_task_id'=>$task_id,'role'=>1])->get();
+        if (!$admin->isEmpty())
+            return $this->response->errorBadRequest('已存在负责人！');
         $user->stallTasks()->attach($task_id,['role'=>1]);
         $user->stallNumber()->increment('number');
         return $this->response->noContent();
     }
 
-    public function checkIn(Request $request){
+    public function deleteTaskAdmin($id,Request $request){
+        //验证 
+        $task_id=$id;
+        $task=StallTask::findOrFail($task_id);
+        $admin=UserStallTask::where(['stall_task_id'=>$task_id,'role'=>1])->get();
+        $admin->delete();
+        return $this->response->noContent();
+    }
+
+    public function checkIn($id,Request $request){
         //验证
         $user_id=$request->user_id;
-        $task_id=$request->task_id;
+        $task_id=$id;
         $user=User::find($user_id);
         $user->stallTasks()->updateExistingPivot($task_id, ['check_in'=>1]);
         $user->stallNumber->increment('number');
@@ -124,18 +144,24 @@ class StallTaskController extends Controller
 
     public function showTaskMember($id){
         $users=User::with([
-            'details'=>function($q){
+            'detail'=>function($q){
                 $q->select(['user_id','name', 'sex' ,'mobile']);
             },
-            'department'=>function($q){
-                $q->select(['user_id','name']);
-            },
-            'stallNumber'=>function($q){
-                $q->select(['user_id','role','check_in']);
+            'stallTasks'=>function($q)use($id){
+                $q->where('stall_task_id',$id)->select(['user_id','role','check_in']);
             },
         ])->whereHas('stallTasks',function($q)use($id){
-            $q->where('id',$id);
-        });
+            $q->where('stall_task_id',$id);
+        })->get()
+          ->makeHidden(['created_at','updated_at','email','deleted_at'])
+          ->each(function($user,$key){
+                $status=$user->stallTasks;
+                unset($user->stallTasks);
+                $user->stallTasks=new stdClass;
+                $user->stallTasks->role=$status[0]->role;
+                $user->stallTasks->check_in=$status[0]->check_in;                
+                $user->detail->makeHidden('user_id');
+          });
         return $this->response->array($users->toArray());
     }
 

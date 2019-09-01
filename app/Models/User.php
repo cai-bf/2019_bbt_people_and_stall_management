@@ -66,7 +66,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function stallTasks(){
-        return $this->belongsToMany(StallTask::class)->using(UserStallTask::class);
+        return $this->belongsToMany(StallTask::class,'user_stall_task')->using(UserStallTask::class);
     }
 
     static public function checkPsd($password, $hashpsd) {

@@ -8,7 +8,9 @@ class UserStallTask extends Pivot
 {
     protected $guarded = [];
     
-    public function users(){
-        return $this->belongsToMany(User::class)->using(UserStallTask::class);
-    }
+    protected $table = 'user_stall_task';
+
+    // public function users(){
+    //     return $this->belongsToMany(User::class)->using(UserStallTask::class);
+    // }
 }
