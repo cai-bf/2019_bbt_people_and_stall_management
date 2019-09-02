@@ -57,7 +57,7 @@ class StallController extends Controller
         }])->find($id);
         else $stalls=Stall::with(['stallTasks'=>function($q){
             $q->select(['stall_id',DB::raw('count(*) as tasks_number')])->groupBy('stall_id');
-        }])->all();
+        }])->get();
         return $this->response->array($stalls->toArray());
     }
 
