@@ -119,13 +119,12 @@ class StallTaskController extends Controller
         return $this->response->noContent();
     }
 
-    public function deleteTaskAdmin($id, Request $request)
+    public function deleteTaskAdmin($id)
     {
         //验证 
         $task_id = $id;
         $task = StallTask::findOrFail($task_id);
-        $admin = UserStallTask::where(['stall_task_id' => $task_id, 'role' => 1])->get();
-        $admin->delete();
+        $admin = UserStallTask::where(['stall_task_id' => $task_id, 'role' => 1])->delete();
         return $this->response->noContent();
     }
 
