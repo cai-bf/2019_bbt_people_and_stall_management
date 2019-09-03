@@ -30,7 +30,7 @@ class StallTaskController extends Controller
             'start' => $request->start,
             'end' => $request->end
         ]);
-        return $this->response()->json(['id' => $task->id]);
+        return response()->json(['id' => $task->id]);
     }
 
     public function deleteTask($id)
