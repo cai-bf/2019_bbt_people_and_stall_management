@@ -177,12 +177,4 @@ class StallTaskController extends Controller
         return $this->response->array($users->toArray());
     }
 
-    public function testCreate($id)
-    {
-        $task = StallTask::find($id);
-        $stall = $task->stall;
-        $already_users_ids = $stall->userStallTask()->pluck('user_id')->toArray();
-        $already_users_str = implode(',', $already_users_ids);
-        dd($already_users_str);
-    }
 }

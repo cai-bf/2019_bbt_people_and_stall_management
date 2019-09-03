@@ -108,7 +108,6 @@ $api->version('v1', [
         $api->delete('stall/task/deleteadmin/{id}','StallTaskController@deleteTaskAdmin')->name('task.delete_admin');
         $api->post('stall/task/create','StallTaskController@createList')->name('task.create');
         
-        $api->get('test/{id}','StallTaskController@testCreate');
         
     });
 });
