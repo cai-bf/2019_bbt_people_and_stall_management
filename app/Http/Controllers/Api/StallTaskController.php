@@ -22,7 +22,7 @@ class StallTaskController extends Controller
     public function newTask(Request $request)
     {
         //验证
-        StallTask::create([
+        $task = StallTask::create([
             'stall_id' => $request->stall_id,
             'location' => $request->location,
             'date' => $request->date,
@@ -30,7 +30,7 @@ class StallTaskController extends Controller
             'start' => $request->start,
             'end' => $request->end
         ]);
-        return $this->response->noContent();
+        return $this->response()->json(['id' => $task->id]);
     }
 
     public function deleteTask($id)
@@ -67,6 +67,7 @@ class StallTaskController extends Controller
         ])->get();
         if ($admin->isEmpty())
             return $this->response->errorBadRequest('请先添加负责人！');
+        $adminer = $admin->first();
         $week = $this->dateToWeek($task->date);
         $day = (int) date("w", strtotime($task->date));
         if ($day == 0) $day = 7;
@@ -81,16 +82,17 @@ class StallTaskController extends Controller
         })->pluck('id')->toArray();
         $users = User::with([
             'stallNumber',
-        ])->whereHas('stallNumber', function ($q) {
-            $q->where('verified', 1);
-        })->whereHas('schedules', function ($q) use ($week, $day, $task) {
-            $q->where([
-                ['week', '=', $week],
-                ['day', '=', $day],
-                ['class', '>=', $task->start],
-                ['class', '<=', $task->end]
-            ]);
-        })->get()
+        ])->where('id', '<>', $adminer->id)
+            ->whereHas('stallNumber', function ($q) {
+                $q->where('verified', 1);
+            })->whereHas('schedules', function ($q) use ($week, $day, $task) {
+                $q->where([
+                    ['week', '=', $week],
+                    ['day', '=', $day],
+                    ['class', '>=', $task->start],
+                    ['class', '<=', $task->end]
+                ]);
+            })->get()
             ->shuffle()
             ->sortBy(function ($user, $key) use ($same_time_tasks_users_ids, $same_stall_users_ids) {
                 if (in_array($user->id, $same_time_tasks_users_ids)) return 200000 + $user->stallNumber->number;
@@ -175,5 +177,4 @@ class StallTaskController extends Controller
             });
         return $this->response->array($users->toArray());
     }
-
 }
