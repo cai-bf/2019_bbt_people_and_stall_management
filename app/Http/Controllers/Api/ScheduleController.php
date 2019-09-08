@@ -75,8 +75,11 @@ class ScheduleController extends Controller
         return $this->response->errorBadRequest('目前只支持jpg, png, jpeg, gif格式');
 
         $user=auth()->user();
-        $path=$request->file('schedule')->store('schedules','public');
         $stall_number=$user->stallNumber;
+        $old_path=$stall_number->photo;
+        if ($old_path!='')Storage::delete('/public'.\substr($old_path,strlen('/storage')));
+
+        $path=$request->file('schedule')->store('schedules','public');
         $stall_number->update(['photo'=> Storage::url($path)]);
 
         return $this->response->array([
@@ -84,5 +87,23 @@ class ScheduleController extends Controller
         ]);
     }
 
+    public function showUnCheck(){
+        $users=User::with([
+            'detail' => function ($q) {
+                $q->select(['user_id', 'name', 'sex', 'mobile']);
+            },
+            'department',
+            'group'
+        ])->where('group_id','>=',5)
+          ->whereHas('stallNumber',function($q){
+            $q->where('verified',0);
+        })->get()
+          ->makeHidden(['created_at', 'updated_at', 'email', 'deleted_at'])
+          ->each(function($q){
+              $q->department->makeHidden(['id','introduction','deleted_at']);
+              $q->group->makeHidden(['id','isAdmin','isManager','level','intro','deleted_at']);
+          });
+        return $this->response->array($users->toArray());
+    }
 
 }
