@@ -58,6 +58,7 @@ class StallTaskController extends Controller
     {
         //验证
         $task_id = $request->task_id;
+        $group_id=($request->group_id)?$request->group_id:6;
         $task = StallTask::findOrFail($task_id);
         if (!UserStallTask::where('stall_task_id', $task_id)->where('role', '<>', 1)->get()->isEmpty())
             return $this->response->errorBadRequest('人员已分配！');
@@ -83,9 +84,10 @@ class StallTaskController extends Controller
         $users = User::with([
             'stallNumber',
         ])->where('id', '<>', $adminer->id)
+            ->where('group_id',$group_id)
             ->whereHas('stallNumber', function ($q) {
                 $q->where('verified', 1);
-            })->whereHas('schedules', function ($q) use ($week, $day, $task) {
+            })->whereDoesntHas('schedules', function ($q) use ($week, $day, $task) {
                 $q->where([
                     ['week', '=', $week],
                     ['day', '=', $day],

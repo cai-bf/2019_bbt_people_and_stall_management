@@ -90,6 +90,7 @@ $api->version('v1', [
         $api->post('stall/schedule/store', 'ScheduleController@store')->name('schedule.store');
         $api->get('stall/schedule/show/{id}', 'ScheduleController@show')->name('schedule.show');
         $api->put('stall/schedule/check/{id}', 'ScheduleController@check')->name('schedule.check');
+        $api->post('stall/schedule/upload', 'ScheduleController@uploadPic')->name('schedule.upload');
 
         // Stall
         $api->post('stall/new', 'StallController@newStall')->name('stall.new');

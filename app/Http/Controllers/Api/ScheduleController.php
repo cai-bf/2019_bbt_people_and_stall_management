@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Schedule;
 use App\Models\UserStallNumber;
+use Illuminate\Support\Facades\Storage;
 
 class ScheduleController extends Controller
 {
@@ -35,14 +36,30 @@ class ScheduleController extends Controller
     }
 
     public function show($id){
+        $user=User::findOrFail($id);
         $schedules=Schedule::where('user_id',$id)
             ->select(['day','class','week'])
             ->orderBy('day')
             ->orderBy('class')
             ->get()
-            ->groupBy(['day','class']);
-            
-        return $this->response->array($schedules->toArray());
+            ->makeHidden(['day', 'class'])
+            ->groupBy(['day','class'])
+            ->each(function($day){
+                $day->transform(function($class){
+                    $newclass=array();
+                    foreach($class as $week){
+                        array_push($newclass,$week->week);
+                    }
+                    sort($newclass);
+                    return $newclass;
+                });
+            });
+        $usnumber=$user->stallNumber;
+
+        return $this->response->array([
+            'photo'=>$usnumber->photo,
+            'schedule'=>$schedules->toArray()
+        ]);
     }
     
     public function check($id){
@@ -52,4 +69,20 @@ class ScheduleController extends Controller
         $user->stallNumber->save();
         return $this->response->noContent();
     }
+
+    public function uploadPic(Request $request){
+        if (!in_array($request->file('schedule')->extension(), ['png', 'jpg', 'jpeg', 'gif']))
+        return $this->response->errorBadRequest('目前只支持jpg, png, jpeg, gif格式');
+
+        $user=auth()->user();
+        $path=$request->file('schedule')->store('schedules','public');
+        $stall_number=$user->stallNumber;
+        $stall_number->update(['photo'=> Storage::url($path)]);
+
+        return $this->response->array([
+            'scheduler' => $stall_number->photo
+        ]);
+    }
+
+
 }
