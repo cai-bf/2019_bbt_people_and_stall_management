@@ -19,7 +19,7 @@ class CreateGroupsTable extends Migration
             $table->boolean('isAdmin');
             $table->boolean('isManager');
             $table->tinyInteger('level');
-            $table->text('intro')->nullable();
+            $table->string('intro', 200)->nullable();
         });
     }
 
