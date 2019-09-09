@@ -12,7 +12,7 @@ class ScheduleController extends Controller
 {
     public function store(Request $request) {
         $id=$request->id;
-        $user=User::find($id);
+        $user=User::findOrFail($id);
         if (!$user->stallNumber){
             UserStallNumber::create([
                 'user_id'=>$id,   
@@ -106,4 +106,10 @@ class ScheduleController extends Controller
         return $this->response->array($users->toArray());
     }
 
+    public function showNumber(){
+        $user=auth()->user();
+        return $this->response->array([
+            'number'=>$user->stallNumber->number
+        ]);
+    }
 }

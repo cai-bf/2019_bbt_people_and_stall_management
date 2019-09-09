@@ -93,6 +93,9 @@ $api->version('v1', [
         $api->post('stall/schedule/upload', 'ScheduleController@uploadPic')->name('schedule.upload');
         $api->get('stall/schedule/uncheck', 'ScheduleController@showUnCheck')->name('schedule.uncheck');
 
+        //show user's stall task number
+        $api->get('stall/number','ScheduleController@showNumber')->name('number.show');
+
         // Stall
         $api->post('stall/new', 'StallController@newStall')->name('stall.new');
         $api->delete('stall/delete/{id}', 'StallController@deleteStall')->name('stall.delete');
