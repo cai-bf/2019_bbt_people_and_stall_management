@@ -87,7 +87,7 @@ class StallTaskController extends Controller
             ->where('group_id',$group_id)
             ->whereHas('stallNumber', function ($q) {
                 $q->where('verified', 1);
-            })->whereDoesntHas('schedules', function ($q) use ($week, $day, $task) {
+            })->whereDoesntHave('schedules', function ($q) use ($week, $day, $task) {
                 $q->where([
                     ['week', '=', $week],
                     ['day', '=', $day],

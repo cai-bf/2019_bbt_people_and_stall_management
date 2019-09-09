@@ -83,7 +83,7 @@ class ScheduleController extends Controller
         $stall_number->update(['photo'=> Storage::url($path)]);
 
         return $this->response->array([
-            'scheduler' => $stall_number->photo
+            'schedule' => $stall_number->photo
         ]);
     }
 

@@ -98,6 +98,7 @@ $api->version('v1', [
         $api->delete('stall/delete/{id}', 'StallController@deleteStall')->name('stall.delete');
         $api->put('stall/update/{id}', 'StallController@updateStall')->name('stall.update');
         $api->get('stall/show/{id?}', 'StallController@showStall')->name('stall.show');
+        $api->get('stall/export/{id}', 'StallController@export')->name('stall.export');
 
         // Stall task
         $api->post('stall/task/new','StallTaskController@newTask')->name('task.new');
