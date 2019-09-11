@@ -20,6 +20,7 @@ class CreateSchedulesTable extends Migration
             $table->tinyInteger('day')->index();
             $table->tinyInteger('class')->index();            
             $table->timestamps();
+            $table->unique(['user_id','week','day','class']);
         });
     }
 
