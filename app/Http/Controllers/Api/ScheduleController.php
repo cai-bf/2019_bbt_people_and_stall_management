@@ -37,6 +37,7 @@ class ScheduleController extends Controller
 
     public function show($id){
         $user=User::findOrFail($id);
+        if (!$user->stallNumber) return $this->response->errorBadRequest('尚未添加课表');
         $schedules=Schedule::where('user_id',$id)
             ->select(['day','class','week'])
             ->orderBy('day')
